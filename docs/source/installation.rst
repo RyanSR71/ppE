@@ -13,7 +13,7 @@ Then, you can import the package:
 
    import ppE
 
-Because this package is in its early development, code may change drastically with updates being put out quickly. To check WaveformUncertainty's version, run
+Because this package is in its early development, code may change drastically with updates being put out quickly. To check ppE's version, run
 
 .. code-block:: python
 
