@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 import numpy as np
 from numpy.linalg import inv
@@ -135,29 +135,11 @@ class WaveformGeneratorPPE(object):
         The following block performs the ppE correction:
         '''
         
-        try:
-            beta_tilde = parameters['beta_tilde']
-            beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
-        except:
-            beta = 0
-        
-        '''
-        try:
-            beta = parameters['beta']
-        except:
-            beta = 0
-    
-        try:
-            delta_epsilon = parameters['delta_epsilon']
-        except:
-            delta_epsilon = 0
-        '''
-        
-        try:
-            delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-            delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
-        except:
-            delta_epsilon = 0
+        beta_tilde = parameters['beta_tilde']
+        beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
+
+        delta_epsilon_tilde = parameters['delta_epsilon_tilde']
+        delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
         
         total_mass = bilby.gw.conversion.generate_mass_parameters(parameters)['total_mass']
                
