@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 import numpy as np
 from numpy.linalg import inv
@@ -137,7 +137,7 @@ class WaveformGeneratorPPE(object):
         
         try:
             beta_tilde = parameters['beta_tilde']
-            beta = utils.beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
+            beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
         except:
             beta = 0
         
@@ -155,14 +155,14 @@ class WaveformGeneratorPPE(object):
         
         try:
             delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-            delta_epsilon = utils.beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
+            delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
         except:
             delta_epsilon = 0
         
         total_mass = bilby.gw.conversion.generate_mass_parameters(parameters)['total_mass']
                
-        model_strain['plus'] = utils.apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
-        model_strain['cross'] = utils.apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
+        model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
+        model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
             
         return model_strain
     
