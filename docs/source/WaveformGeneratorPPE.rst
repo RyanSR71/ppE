@@ -14,7 +14,7 @@ Modified WaveformGenerator object from `bilby.gw.WaveformGenerator <https://lscs
 
 .. math::
 
-   \mu_\mathrm{ppE}(f;\theta,b,\beta,\delta\epsilon)=\mu(f;\theta)\exp[i\Delta\phi_\mathrm{ppE}(f;b,\beta,\delta_epsilon)]
+   \mu_\mathrm{ppE}(f;\theta,b,\beta,\delta\epsilon)=\mu(f;\theta)\exp[i\Delta\phi_\mathrm{ppE}(f;b,\beta,\delta\epsilon)]
 
 .. math::
 
