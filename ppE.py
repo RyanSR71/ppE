@@ -13,7 +13,7 @@ from bilby.core.series import CoupledTimeAndFrequencySeries
 from bilby.core.utils import PropertyAccessor
 from bilby.gw.conversion import convert_to_lal_binary_neutron_star_parameters
 import lal
-from ppE import utils
+from . import utils
 
 
 
