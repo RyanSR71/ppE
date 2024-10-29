@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 import numpy as np
 from numpy.linalg import inv
@@ -13,7 +13,7 @@ from bilby.core.series import CoupledTimeAndFrequencySeries
 from bilby.core.utils import PropertyAccessor
 from bilby.gw.conversion import convert_to_lal_binary_neutron_star_parameters
 import lal
-import utils
+from . import utils
 
 
 
