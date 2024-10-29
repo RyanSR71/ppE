@@ -1,0 +1,8 @@
+sphinx==7.1.2
+nbsphinx==0.9.4
+sphinx-rtd-theme==1.3.0rc1
+pandoc==2.1.0
+numpy
+bilby
+scipy
+lal
