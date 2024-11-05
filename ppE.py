@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.2.6"
+__version__ = "0.2.7"
 
 import numpy as np
 from numpy.linalg import inv
@@ -138,15 +138,12 @@ class WaveformGeneratorPPE(object):
         total_mass = bilby.gw.conversion.generate_mass_parameters(parameters)['total_mass']
                               
         beta_tilde = parameters['beta_tilde']
-        print(beta_tilde)
         beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
-        print(beta)
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        print(delta_epsilon_tilde)
         delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
-        print(delta_epsilon)
-        print(parameters['b'])
+                              
+        print(f'beta_tilde: {beta_tilde}, beta: {beta}, delta_epsilon_tilde: {delta_epsilon_tilde}, delta_epsilon: {delta_epsilon}, total_mass: {total_mass}, f_low: {self.waveform_arguments['f_low']}')
                               
         model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
         model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
