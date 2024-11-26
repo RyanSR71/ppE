@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.2.9.2"
+__version__ = "0.3.0"
 
 import numpy as np
 from numpy.linalg import inv
@@ -141,7 +141,7 @@ class WaveformGeneratorPPE(object):
         beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
+        delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
                               
         #print(f"b: {parameters['b']}, beta_tilde: {beta_tilde}, beta: {beta}, delta_epsilon_tilde: {delta_epsilon_tilde}, delta_epsilon: {delta_epsilon}, total_mass: {total_mass}, f_low: {self.waveform_arguments['f_low']}")
                               
