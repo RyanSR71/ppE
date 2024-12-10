@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 import numpy as np
 from numpy.linalg import inv
@@ -141,8 +141,8 @@ class WaveformGeneratorPPE(object):
         beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
-        #delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
+        #delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
+        delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
                               
         #print(f"b: {parameters['b']}, beta_tilde: {beta_tilde}, beta: {beta}, delta_epsilon_tilde: {delta_epsilon_tilde}, delta_epsilon: {delta_epsilon}, total_mass: {total_mass}, f_low: {self.waveform_arguments['f_low']}")
                               
@@ -407,7 +407,7 @@ def apply_ppe_correction(strain,frequency_array, total_mass, ppe_beta, ppe_b, pp
     phase_change[i_MR:] = ppe_post_inspiral_correction_to_phase(freqs[i_MR:], total_mass, ppe_beta, ppe_b, ppe_delta_epsilon, Mfreq_IM=total_mass_in_seconds*f_IM)
     
     # Compute transition correction, if any:
-    ppe_epsilon = ppe_beta + ppe_delta_epsilon
+    ppe_epsilon = ppe_beta*(1 + ppe_delta_epsilon)
     dphi_factor = ppe_b * np.pi * total_mass_in_seconds / 3.0 * pow(v_IM,ppe_b-3)
     phase_change[i_IM:i_MR] = ppe_transition_correction_to_phase(freqs[i_IM:i_MR], phase_change[i_IM], phase_change[i_MR], dphi_factor * ppe_beta, dphi_factor * ppe_epsilon, f_IM, f_MR)
 
