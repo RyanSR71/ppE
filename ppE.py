@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 
 import numpy as np
 from numpy.linalg import inv
@@ -100,10 +100,10 @@ class WaveformGeneratorPPE(object):
                                       transformed_model_data_points=self.time_array,
                                       )
         
-        plus_td_waveform = self.sampling_frequency*np.fft.ifft(fd_model_strain['plus'])
+        plus_td_waveform = np.real(self.sampling_frequency*np.fft.ifft(fd_model_strain['plus']))
         plus_td_model_strain = np.interp(self.time_array,np.linspace(self.time_array[0],self.time_array[-1],len(plus_td_waveform)),plus_td_waveform)
 
-        cross_td_waveform = self.sampling_frequency*np.fft.ifft(fd_model_strain['cross'])
+        cross_td_waveform = np.real(self.sampling_frequency*np.fft.ifft(fd_model_strain['cross']))
         cross_td_model_strain = np.interp(self.time_array,np.linspace(self.time_array[0],self.time_array[-1],len(cross_td_waveform)),cross_td_waveform)
 
         model_strain = dict()
