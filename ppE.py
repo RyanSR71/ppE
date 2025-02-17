@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.3.3"
+__version__ = "0.4.0"
 
 import numpy as np
 from numpy.linalg import inv
@@ -13,6 +13,60 @@ from bilby.core.series import CoupledTimeAndFrequencySeries
 from bilby.core.utils import PropertyAccessor
 from bilby.gw.conversion import convert_to_lal_binary_neutron_star_parameters
 import lal
+
+
+
+class DiscreteUniformExcludingZero(bilby.prior.Uniform):
+    
+    def __init__(self, minimum, maximum, name=None, latex_label=None,
+                 unit=None, boundary=None):
+        """Log-Uniform prior with bounds
+        Parameters
+        ==========
+        minimum: int
+            See superclass
+        maximum: int
+            See superclass
+        name: str
+            See superclass
+        latex_label: str
+            See superclass
+        unit: str
+            See superclass
+        boundary: str
+            See superclass
+        """
+        if not isinstance(minimum, int) or not isinstance(maximum, int):
+            raise ValueError("minimum/maximum must be integers")
+        
+#         if minimum >= 0 or maximum <= 0:
+#             self.interval_arr = np.arange(minimum,maximum,1)
+#         else:
+#             self.interval_arr = np.concatenate([np.arange(minimum,0,1), np.arange(1,maximum+1,1)])
+        self.interval_arr = np.arange(minimum,maximum+1,1)
+        self.interval_arr = self.interval_arr[self.interval_arr != 0]
+        super(DiscreteUniformExcludingZero, self).__init__(name=name, latex_label=latex_label, unit=unit,
+                                         minimum=minimum, maximum=maximum, boundary=boundary)
+        
+        
+    def rescale(self, val):
+        """
+        'Rescale' a sample from the unit line element to the power-law prior.
+        This maps to the inverse CDF. This has been analytically solved for this case.
+        Parameters
+        ==========
+        val: Union[float, int, array_like]
+            Uniform probability
+        Returns
+        =======
+        Union[float, array_like]: Rescaled probability
+        """
+        #sampled_arr = [self.interval_arr[x] for x in np.floor(val * len(self.interval_arr)) ]
+        if hasattr(val, "__len__"):
+            rescale_val = np.array([self.interval_arr[x] for x in np.floor(val * len(self.interval_arr)).astype(int) ])
+        else:
+            rescale_val = self.interval_arr[math.floor(val * len(self.interval_arr))]
+        return rescale_val
 
 
 
