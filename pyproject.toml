@@ -4,6 +4,6 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "ppE"
-authors = [{name = "Ryan Johnson", email = "ryansr71@csu.fullerton.edu"},{name = "Marceline Bonilla", email = "gsbonilla@fullerton.edu"}]
+authors = [{name = "Ryan Johnson", email = "ryansr71@csu.fullerton.edu"},{name = "Marceline Bonilla"},{name = "Swati Singh"}]
 dynamic = ["version", "description"]
 dependencies = ['numpy','bilby','scipy']
