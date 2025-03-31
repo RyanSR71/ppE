@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
 import numpy as np
 from numpy.linalg import inv
@@ -146,6 +146,14 @@ class WaveformGeneratorPPE(object):
     '''
     New time_domain_strain() function
     '''
+    def old_time_domain_strain(self, parameters=None):
+        return self._calculate_strain(model=self.time_domain_source_model,
+                                      model_data_points=self.time_array,
+                                      parameters=parameters,
+                                      transformation_function=utils.infft,
+                                      transformed_model=self.frequency_domain_source_model,
+                                      transformed_model_data_points=self.frequency_array)
+        
     def time_domain_strain(self,parameters=None):
         fd_model_strain = self._calculate_strain(model=self.frequency_domain_source_model,
                                       model_data_points=self.frequency_array,
@@ -155,15 +163,9 @@ class WaveformGeneratorPPE(object):
                                       transformed_model_data_points=self.time_array,
                                       )
         
-        plus_td_waveform = np.real(self.sampling_frequency*np.fft.ifft(fd_model_strain['plus']))
-        plus_td_model_strain = np.interp(self.time_array,np.linspace(self.time_array[0],self.time_array[-1],len(plus_td_waveform)),plus_td_waveform)
-
-        cross_td_waveform = np.real(self.sampling_frequency*np.fft.ifft(fd_model_strain['cross']))
-        cross_td_model_strain = np.interp(self.time_array,np.linspace(self.time_array[0],self.time_array[-1],len(cross_td_waveform)),cross_td_waveform)
-
         model_strain = dict()
-        model_strain['plus'] = plus_td_model_strain
-        model_strain['cross'] = cross_td_model_strain
+        model_strain['plus'] = td_waveform(fd_model_strain['plus'],self.sampling_frequency)
+        model_strain['cross'] = td_waveform(fd_model_strain['cross'],self.sampling_frequency)
 
         return model_strain
     
@@ -255,6 +257,11 @@ class WaveformGeneratorPPE(object):
 #######################################
 ##Temporary Utility Function Location##
 #######################################
+def td_waveform(fd_waveform,sampling_frequency):
+    reversed_fd_waveform = fd_waveform[::-1]
+    total_fd_strain = np.concatenate((fd_waveform,np.conjugate(reversed_fd_waveform[1:-1])))
+    td_waveform = sampling_frequency*np.real(np.fft.ifft(total_fd_strain))
+    return td_waveform
 
 def keplerian_velocity(freqs, total_mass, ppe_b = 1.0):
     # If the total mass is given in solar masses,
