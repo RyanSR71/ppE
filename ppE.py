@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 import numpy as np
 from numpy.linalg import inv
@@ -146,14 +146,6 @@ class WaveformGeneratorPPE(object):
     '''
     New time_domain_strain() function
     '''
-    def old_time_domain_strain(self, parameters=None):
-        return self._calculate_strain(model=self.time_domain_source_model,
-                                      model_data_points=self.time_array,
-                                      parameters=parameters,
-                                      transformation_function=utils.infft,
-                                      transformed_model=self.frequency_domain_source_model,
-                                      transformed_model_data_points=self.frequency_array)
-        
     def time_domain_strain(self,parameters=None):
         fd_model_strain = self._calculate_strain(model=self.frequency_domain_source_model,
                                       model_data_points=self.frequency_array,
@@ -195,13 +187,10 @@ class WaveformGeneratorPPE(object):
         total_mass = bilby.gw.conversion.generate_mass_parameters(parameters)['total_mass']
                               
         beta_tilde = parameters['beta_tilde']
-        beta = beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
+        beta = inversion_function(0,3,parameters['b'])*beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        #delta_epsilon = beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
         delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
-                              
-        #print(f"b: {parameters['b']}, beta_tilde: {beta_tilde}, beta: {beta}, delta_epsilon_tilde: {delta_epsilon_tilde}, delta_epsilon: {delta_epsilon}, total_mass: {total_mass}, f_low: {self.waveform_arguments['f_low']}")
                               
         model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
         model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.5,True)
@@ -257,6 +246,15 @@ class WaveformGeneratorPPE(object):
 #######################################
 ##Temporary Utility Function Location##
 #######################################
+def inversion_function(a,b,x):
+    if x < a:
+        I = 1
+    elif x > b:
+        I = 1
+    else:
+        I = -1
+    return I
+
 def td_waveform(fd_waveform,sampling_frequency):
     reversed_fd_waveform = fd_waveform[::-1]
     total_fd_strain = np.concatenate((fd_waveform,np.conjugate(reversed_fd_waveform[1:-1])))
