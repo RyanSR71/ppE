@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.7.0"
+__version__ = "0.7.0.1"
 
 import numpy as np
 from numpy.linalg import inv
@@ -470,7 +470,7 @@ def apply_ppe_correction(strain,frequency_array, total_mass, ppe_beta, ppe_b, pp
     phase_change[1:i_IM+1] = ppe_inspiral_correction_to_phase(freqs[1:i_IM+1], total_mass, ppe_beta, ppe_b)
 
     # Compute ppe-epsilon correction:
-    phase_change[i_MR:] = ppe_post_inspiral_correction_to_phase(freqs[i_MR:], total_mass, ppe_beta, ppe_b, ppe_delta_epsilon, Mfreq_IM=total_mass_in_seconds*f_IM)
+    phase_change[i_MR:] = ppe_post_inspiral_correction_to_phase(freqs[i_MR:], total_mass, ppe_beta, ppe_b, ppe_epsilon, Mfreq_IM=total_mass_in_seconds*f_IM)
     
     # Compute transition correction, if any:
     dphi_factor = ppe_b * np.pi * total_mass_in_seconds / 3.0 * pow(v_IM,ppe_b-3)
