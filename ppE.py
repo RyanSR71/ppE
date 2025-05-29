@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.6.0.1"
+__version__ = "0.6.1"
 
 import numpy as np
 from numpy.linalg import inv
@@ -191,9 +191,10 @@ class WaveformGeneratorPPE(object):
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
         delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
+        epsilon = beta*(1+delta_epsilon)
                               
-        model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.75,False)
-        model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.75,False)
+        model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],epsilon,0.018,0.75,False)
+        model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],epsilon,0.018,0.75,False)
             
         return model_strain
     
@@ -270,12 +271,12 @@ def keplerian_velocity(freqs, total_mass, ppe_b = 1.0):
 def ppe_inspiral_correction_to_phase(freqs, total_mass, ppe_beta, ppe_b):
     return ppe_beta * keplerian_velocity(freqs, total_mass * lal.MTSUN_SI, ppe_b)
 
-def ppe_post_inspiral_correction_to_phase(freqs, total_mass, ppe_beta, ppe_b, ppe_delta_epsilon=0.0, Mfreq_IM=0.018):
+def ppe_post_inspiral_correction_to_phase(freqs, total_mass, ppe_beta, ppe_b, ppe_epsilon=0.0, Mfreq_IM=0.018):
     velocities_3 = np.pi * total_mass * lal.MTSUN_SI * freqs
     velocity_IM_3 = np.pi * Mfreq_IM
     velocity_IM_b = pow(velocity_IM_3, ppe_b/3.0)
     #return ppe_beta * velocity_IM_b + ppe_b / 3.0 * (ppe_beta + ppe_delta_epsilon) * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
-    return ppe_beta * velocity_IM_b + ppe_b / 3.0 * ppe_beta*(1 + ppe_delta_epsilon) * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
+    return ppe_beta * velocity_IM_b + ppe_b / 3.0 * ppe_epsilon * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
 
 def dphi0(phi1, phi2, dphi1, dphi2, f1, f2):
     return (phi2-phi1)/(f2-f1)
@@ -405,7 +406,7 @@ def ringdown_frequency(strain,frequency_array, total_mass):
     f_RD = freqs[i_min + i_fLR]
     return f_RD
 
-def apply_ppe_correction(strain,frequency_array, total_mass, ppe_beta, ppe_b, ppe_delta_epsilon=0.0, Mfreq_IM = 0.018, ratio_f_MR_to_f_RD=0.5, aligned=True, window_size = 41):
+def apply_ppe_correction(strain,frequency_array, total_mass, ppe_beta, ppe_b, ppe_epsilon=0.0, Mfreq_IM = 0.018, ratio_f_MR_to_f_RD=0.75, aligned=True, window_size = 41):
     """Applies the parameterized post-Einsteinian corrections to a waveform
     in the frequency domain such that the phase is first-differentiable across
     the different frequency regimes, where a different correction is
@@ -465,10 +466,9 @@ def apply_ppe_correction(strain,frequency_array, total_mass, ppe_beta, ppe_b, pp
     phase_change[1:i_IM+1] = ppe_inspiral_correction_to_phase(freqs[1:i_IM+1], total_mass, ppe_beta, ppe_b)
 
     # Compute ppe-epsilon correction:
-    phase_change[i_MR:] = ppe_post_inspiral_correction_to_phase(freqs[i_MR:], total_mass, ppe_beta, ppe_b, ppe_delta_epsilon, Mfreq_IM=total_mass_in_seconds*f_IM)
+    phase_change[i_MR:] = ppe_post_inspiral_correction_to_phase(freqs[i_MR:], total_mass, ppe_beta, ppe_b, ppe_epsilon, Mfreq_IM=total_mass_in_seconds*f_IM)
     
     # Compute transition correction, if any:
-    ppe_epsilon = ppe_beta*(1 + ppe_delta_epsilon)
     dphi_factor = ppe_b * np.pi * total_mass_in_seconds / 3.0 * pow(v_IM,ppe_b-3)
     phase_change[i_IM:i_MR] = ppe_transition_correction_to_phase(freqs[i_IM:i_MR], phase_change[i_IM], phase_change[i_MR], dphi_factor * ppe_beta, dphi_factor * ppe_epsilon, f_IM, f_MR)
 
