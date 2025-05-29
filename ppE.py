@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.6.1"
+__version__ = "0.6.1.1"
 
 import numpy as np
 from numpy.linalg import inv
@@ -189,9 +189,8 @@ class WaveformGeneratorPPE(object):
         beta_tilde = parameters['beta_tilde']
         beta = inversion_function(0,3,parameters['b'])*beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
-        delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
-        epsilon = beta*(1+delta_epsilon)
+        epsilon_tilde = parameters['epsilon_tilde']
+        epsilon = inversion_function(0,3,parameters['b'])*beta_from_beta_tilde_wrapped(epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],epsilon,0.018,0.75,False)
         model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],epsilon,0.018,0.75,False)
@@ -226,7 +225,7 @@ class WaveformGeneratorPPE(object):
         new_parameters, _ = self.parameter_conversion(new_parameters)
         for key in self.source_parameter_keys.symmetric_difference(new_parameters):
             #############################################################################
-            if key not in ['beta','delta_epsilon','beta_tilde','delta_epsilon_tilde','b']:  
+            if key not in ['beta','delta_epsilon','beta_tilde','delta_epsilon_tilde','b','epsilon','epsilon_tilde']:  
                 new_parameters.pop(key)
             #############################################################################
         self.__parameters = new_parameters
