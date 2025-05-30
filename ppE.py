@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.6.0.1"
+__version__ = "0.6.1"
 
 import numpy as np
 from numpy.linalg import inv
@@ -190,7 +190,7 @@ class WaveformGeneratorPPE(object):
         beta = inversion_function(0,3,parameters['b'])*beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        delta_epsilon = -10*delta_epsilon_tilde*(parameters['b']-3)
+        delta_epsilon = delta_epsilon_tilde*beta
                               
         model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.75,False)
         model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.75,False)
@@ -274,8 +274,8 @@ def ppe_post_inspiral_correction_to_phase(freqs, total_mass, ppe_beta, ppe_b, pp
     velocities_3 = np.pi * total_mass * lal.MTSUN_SI * freqs
     velocity_IM_3 = np.pi * Mfreq_IM
     velocity_IM_b = pow(velocity_IM_3, ppe_b/3.0)
-    #return ppe_beta * velocity_IM_b + ppe_b / 3.0 * (ppe_beta + ppe_delta_epsilon) * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
-    return ppe_beta * velocity_IM_b + ppe_b / 3.0 * ppe_beta*(1 + ppe_delta_epsilon) * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
+    return ppe_beta * velocity_IM_b + ppe_b / 3.0 * (ppe_beta + ppe_delta_epsilon) * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
+    #return ppe_beta * velocity_IM_b + ppe_b / 3.0 * ppe_beta*(1 + ppe_delta_epsilon) * velocity_IM_b * (velocities_3/velocity_IM_3 - 1.0)
 
 def dphi0(phi1, phi2, dphi1, dphi2, f1, f2):
     return (phi2-phi1)/(f2-f1)
@@ -468,7 +468,7 @@ def apply_ppe_correction(strain,frequency_array, total_mass, ppe_beta, ppe_b, pp
     phase_change[i_MR:] = ppe_post_inspiral_correction_to_phase(freqs[i_MR:], total_mass, ppe_beta, ppe_b, ppe_delta_epsilon, Mfreq_IM=total_mass_in_seconds*f_IM)
     
     # Compute transition correction, if any:
-    ppe_epsilon = ppe_beta*(1 + ppe_delta_epsilon)
+    ppe_epsilon = ppe_beta + ppe_delta_epsilon
     dphi_factor = ppe_b * np.pi * total_mass_in_seconds / 3.0 * pow(v_IM,ppe_b-3)
     phase_change[i_IM:i_MR] = ppe_transition_correction_to_phase(freqs[i_IM:i_MR], phase_change[i_IM], phase_change[i_MR], dphi_factor * ppe_beta, dphi_factor * ppe_epsilon, f_IM, f_MR)
 
