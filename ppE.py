@@ -1,5 +1,5 @@
 "ppE package"
-__version__ = "0.6.1"
+__version__ = "0.7.0"
 
 import numpy as np
 from numpy.linalg import inv
@@ -79,7 +79,6 @@ class WaveformGeneratorPPE(object):
     time_array = PropertyAccessor('_times_and_frequencies', 'time_array')
     def __init__(self, duration=None, sampling_frequency=None, start_time=0, frequency_domain_source_model=None,
                  time_domain_source_model=None, parameters=None,
-                 waveform_uncertainty_nodes=None,dA_sampling=False,dphi_sampling=False,phi_indexes=None,
                  parameter_conversion=None,
                  waveform_arguments=None):
         self._times_and_frequencies = CoupledTimeAndFrequencySeries(duration=duration,
@@ -88,9 +87,6 @@ class WaveformGeneratorPPE(object):
         self.frequency_domain_source_model = frequency_domain_source_model
         self.time_domain_source_model = time_domain_source_model
         self.source_parameter_keys = self.__parameters_from_source_model()
-        self.dA_sampling = dA_sampling
-        self.dphi_sampling=dphi_sampling
-        self.phi_indexes=phi_indexes
         
         if parameter_conversion is None:
             self.parameter_conversion = convert_to_lal_binary_black_hole_parameters
@@ -132,7 +128,7 @@ class WaveformGeneratorPPE(object):
                                          'parameter_conversion={}, ' \
                                          'waveform_arguments={})'\
             .format(self.duration, self.sampling_frequency, self.start_time, fdsm_name, tdsm_name,
-                    param_conv_name, self.waveform_uncertainty_nodes, self.dA_sampling, self.dphi_sampling, self.phi_indexes, self.waveform_arguments)
+                    param_conv_name, self.waveform_arguments)
     
     def frequency_domain_strain(self, parameters=None):
         return self._calculate_strain(model=self.frequency_domain_source_model,
@@ -190,7 +186,7 @@ class WaveformGeneratorPPE(object):
         beta = inversion_function(0,3,parameters['b'])*beta_from_beta_tilde_wrapped(beta_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         delta_epsilon_tilde = parameters['delta_epsilon_tilde']
-        delta_epsilon = delta_epsilon_tilde*beta
+        delta_epsilon = inversion_function(0,3,parameters['b'])*beta_from_beta_tilde_wrapped(delta_epsilon_tilde,self.waveform_arguments['f_low'],1/np.pi,parameters['b'],0.018,total_mass)
                               
         model_strain['plus'] = apply_ppe_correction(model_strain['plus'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.75,False)
         model_strain['cross'] = apply_ppe_correction(model_strain['cross'],self.frequency_array,total_mass,beta,parameters['b'],delta_epsilon,0.018,0.75,False)
