@@ -23,7 +23,7 @@ prior['beta_tilde'] = bilby.core.prior.Uniform(name='beta_tilde',latex_label=r'$
 prior['delta_epsilon_tilde'] = bilby.core.prior.Uniform(name='delta_epsilon_tilde',latex_label=r'$\delta\tilde{\epsilon}$',minimum=-2,maximum=2)
 prior['b'] = bilby.core.prior.Uniform(name='b',latex_label=r'$b$',minimum=-5,maximum=4)
 
-The prior boundaries on beta_tilde and delta_epsilon_tilde are motivated by mismatch contour plots where a 2x2 square can encapsulate the <10% mismatch region in beta_tilde-delta_epsilon_tilde space
+The prior boundaries on beta_tilde and delta_epsilon_tilde are motivated by mismatch contour plots (pdfs in this directory by Swati) where a 2x2 square can encapsulate the <10% mismatch region in beta_tilde-delta_epsilon_tilde space
 The minimum b value is -5, where -5 corresponds to a 0 PN correction. On the other side, we use b=4, corresponding to a 4.5 PN correction. 
 
 To Investigate: including b values beyond b=4 in the prior causes parameter estimation to stall; some value between 4 and 5 is some sort of critical value
