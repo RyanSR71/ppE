@@ -1,0 +1,36 @@
+For all runs in this directory, we use the same BBH source parameters:
+
+injection = dict(
+    chirp_mass=34.8,
+    mass_ratio=1,
+    chi_1=0,
+    chi_2=0,
+    luminosity_distance=1000,
+    geocent_time=1126259642.5,
+    phase=1.577,
+    theta_jn=0.48736165,
+    dec=-1.0108,
+    ra=1.7475,
+    psi=2.6597,
+)
+
+When using Cosmic Explorer (CE), we use bilby's built-in CE interferometer object. This gives us an SNR of 969.82
+For the aLIGO runs, we use bilby's H1 and L1 interferometer objects in tandem. This gives us a network SNR of 32.48
+
+For the source parameters: runs were performed with distance and phase marginalization while sampling in chirp mass and geocent time. All other source parameters were fixed at their injection values
+
+For the ppE parameters, we use priors:
+
+prior['beta_tilde'] = bilby.core.prior.Uniform(name='beta_tilde',latex_label=r'$\tilde{\beta}$',minimum=-2,maximum=2)
+prior['delta_epsilon_tilde'] = bilby.core.prior.Uniform(name='delta_epsilon_tilde',latex_label=r'$\delta\tilde{\epsilon}$',minimum=-2,maximum=2)
+prior['b'] = bilby.core.prior.Uniform(name='b',latex_label=r'$b$',minimum=-5,maximum=4)
+
+The prior boundaries on beta_tilde and delta_epsilon_tilde are motivated by mismatch contour plots where a 2x2 square can encapsulate the <10% mismatch region in beta_tilde-delta_epsilon_tilde space
+The minimum b value is -5, where -5 corresponds to a 0 PN correction. On the other side, we use b=4, corresponding to a 4.5 PN correction. 
+
+To Investigate: including b values beyond b=4 in the prior causes parameter estimation to stall; some value between 4 and 5 is some sort of critical value
+
+For the bGR-bGR runs, we inject beta_tilde=0.5 and delta_epsilon_tilde=-0.25.
+
+For the beta-b plot, we use a total mass of 80 solar masses. To simulate CE and aLIGO in this plot, we choose different minimum frequencies, 
+arguing that CE's lower noise curve allows for the detection of waveforms down to around 5 Hz. aLIGO's noise curve demands a minimum frequency of around 20 Hz.
