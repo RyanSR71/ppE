@@ -1,0 +1,16 @@
+universe                 = vanilla
+get_env                  = True
+executable               = /home/ryanmatthew.johnson/bGR/output/submission/bGR-bGR-test.sh
+log                     = /home/ryanmatthew.johnson/bGR/output/submission/log/bGR-bGR-test_log.log
+output                  = /home/ryanmatthew.johnson/bGR/output/submission/log/bGR-bGR-test_out.out
+error                   = /home/ryanmatthew.johnson/bGR/output/submission/log/bGR-bGR-test_err.err
+stream_error = True
+stream_input = True
+stream_output = True
+request_cpus = 16
+request_disk = 32 MB
+request_memory = 16384 MB
+should_transfer_files = YES
+accounting_group        = ligo.dev.o5.cbc.waveforms.bilby
+batch_name = bGR-bGR-test_ppE_waveform
+queue 1
